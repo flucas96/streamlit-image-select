@@ -118,6 +118,12 @@ poetry publish
 
 ## Changelog
 
+### 0.7.0 (August 2, 2024)
+- Added parameter `images_rows` to be able to display the images in multiple rows.
+- If using `images_rows`, it is possible to add rudimentary tooltips.
+- Added parameter `disabled` to be able to disable the selector.
+- Added parameter `custom_css` to allow for custom styling of the whole component if the user whishes to.
+- Added the possibility to use html code in the `label` and `captions` parameters.
 ### 0.6.0 (March 28, 2023)
 - Removed `st.experimental_memo`, which is deprecated. 
 - Changed minimum version of Streamlit to 1.19.

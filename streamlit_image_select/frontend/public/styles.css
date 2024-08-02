@@ -32,9 +32,11 @@ label {
     flex-wrap: wrap;
     gap: 0.5rem;
 }
+
 .item {
     width: 10rem;
 }
+
 .item.stretch {
     flex: 1;
 }
@@ -45,6 +47,7 @@ label {
     padding: calc(0.25rem + 1px);
     height: 10rem;
     min-width: 10rem;
+    position: relative; /* Required for tooltips */
 }
 
 .image-box.dark {
@@ -112,3 +115,4 @@ label {
 .disabled .image.selected {
     opacity: 0.5;
 }
+

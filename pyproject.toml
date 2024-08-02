@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "streamlit-image-select"
-version = "0.6.0"
+name = "streamlit-image-select-rows"
+version = "0.7.0"
 description = "🖼️ An image select component for Streamlit"
-authors = ["Johannes Rieke <johannes.rieke@gmail.com>"]
+authors = ["Johannes Rieke <johannes.rieke@gmail.com>", "Fabian Lucas <fl@msr.de>"]
 license = "MIT"
 readme = "README.md"
 # This is required so the frontend code is properly included in the wheel. 
