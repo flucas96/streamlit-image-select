@@ -8,7 +8,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from PIL import Image
 
-_RELEASE = True
+_RELEASE = False
 
 if not _RELEASE:
     _component_func = components.declare_component(
@@ -43,23 +43,25 @@ def image_select(
     *,
     use_container_width: bool = True,
     return_value: str = "original",
+    disabled: bool = False,
     key: str = None,
 ):
     """Shows several images and returns the image selected by the user.
 
     Args:
-        label (str): The label shown above the images.
+        label (str): The label shown above the images. [HTML code will be rendered]
         images (list): The images to show. Allowed image formats are paths to local
             files, URLs, PIL images, and numpy arrays.
         captions (list of str): The captions to show below the images. Defaults to
-            None, in which case no captions are shown.
-        index (int, optional): The index of the image that is selected by default.
+            None, in which case no captions are shown. [HTML code will be rendered]
+        index (int, optional, None): The index of the image that is selected by default.
             Defaults to 0.
         use_container_width (bool, optional): Whether to stretch the images to the
             width of the surrounding container. Defaults to True.
         return_value ("original" or "index", optional): Whether to return the
             original object passed into `images` or the index of the selected image.
             Defaults to "original".
+        disabled (bool, optional): Whether the component is disabled. Defaults to False.
         key (str, optional): The key of the component. Defaults to None.
 
     Returns:
@@ -75,11 +77,12 @@ def image_select(
             "The number of images and captions must be equal but `captions` has "
             f"{len(captions)} elements and `images` has {len(images)} elements."
         )
-    if index >= len(images):
-        raise ValueError(
-            f"`index` must be smaller than the number of images ({len(images)}) "
-            f"but it is {index}."
-        )
+    if index:
+        if index >= len(images):
+            raise ValueError(
+                f"`index` must be smaller than the number of images ({len(images)}) "
+                f"but it is {index}."
+            )
 
     # Encode local images/numpy arrays/PIL images to base64.
     encoded_images = []
@@ -100,10 +103,18 @@ def image_select(
         use_container_width=use_container_width,
         key=key,
         default=index,
+        disabled=disabled,
+        defaultValue = index
     )
 
     # The frontend component returns the index of the selected image but we want to
     # return the actual image.
+        # If the component is disabled, return the default (initial) value.
+    if disabled:
+        component_value = index
+        
+    if component_value is None:
+        return None
     if return_value == "original":
         return images[component_value]
     elif return_value == "index":

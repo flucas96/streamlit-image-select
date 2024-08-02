@@ -1,7 +1,6 @@
 import { Streamlit, RenderData } from "streamlit-component-lib"
 
 const labelDiv = document.body.appendChild(document.createElement("label"))
-const label = labelDiv.appendChild(document.createTextNode(""))
 const container = document.body.appendChild(document.createElement("div"))
 container.classList.add("container")
 
@@ -18,22 +17,22 @@ function onRender(event: Event): void {
     labelDiv.style.font = data.theme.font
     labelDiv.style.color = data.theme.textColor
     if (data.theme.base === "dark") {
-      document.body.querySelectorAll(".box, .caption").forEach((el) => {
+      document.body.querySelectorAll(".image-box, .caption").forEach((el) => {
         el.classList.add("dark")
       })
     } else {
-      document.body.querySelectorAll(".box, .caption").forEach((el) => {
+      document.body.querySelectorAll(".image-box, .caption").forEach((el) => {
         el.classList.remove("dark")
       })
     }
-
-    // TODO: Gray out the component if it's disabled.
   }
 
-  label.textContent = data.args["label"]
+  // Set the label HTML content
+  labelDiv.innerHTML = data.args["label"]
+
   let images = data.args["images"]
   let captions = data.args["captions"]
-  // console.log(captions)
+  console.log("Received data:", data)  // Log the entire data object
 
   if (container.childNodes.length === 0) {
     images.forEach((image: string, i: number) => {
@@ -53,7 +52,7 @@ function onRender(event: Event): void {
       if (captions) {
         let caption = item.appendChild(document.createElement("div"))
         caption.classList.add("caption")
-        caption.textContent = captions[i]
+        caption.innerHTML = captions[i]
       }
 
       if (i === data.args["index"]) {
@@ -62,14 +61,22 @@ function onRender(event: Event): void {
       }
 
       img.onclick = function () {
-        container.querySelectorAll(".selected").forEach((el) => {
-          el.classList.remove("selected")
-        })
-        Streamlit.setComponentValue(i)
-        box.classList.add("selected")
-        img.classList.add("selected")
+        if (!data.args["disabled"]) {  // Ensure click only works when not disabled
+          container.querySelectorAll(".selected").forEach((el) => {
+            el.classList.remove("selected")
+          })
+          Streamlit.setComponentValue(i)
+          box.classList.add("selected")
+          img.classList.add("selected")
+        }
       }
     })
+  }
+  // Apply the disabled state if data.disabled is true
+  if (data.args["disabled"]) {
+    container.classList.add("disabled")
+  } else {
+    container.classList.remove("disabled")
   }
 
   // We tell Streamlit to update our frameHeight after each render event, in
