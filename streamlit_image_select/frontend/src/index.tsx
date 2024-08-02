@@ -31,48 +31,71 @@ function onRender(event: Event): void {
   labelDiv.innerHTML = data.args["label"]
 
   let images = data.args["images"]
-  let captions = data.args["captions"]
+  let imagesRows = data.args["images_rows"]
   console.log("Received data:", data)  // Log the entire data object
 
-  if (container.childNodes.length === 0) {
-    images.forEach((image: string, i: number) => {
-      let item = container.appendChild(document.createElement("div"))
+  // Clear container for re-rendering
+  container.innerHTML = ""
+
+  const renderImageRow = (row: any, rowIndex: number) => {
+    const rowContainer = container.appendChild(document.createElement("div"))
+    rowContainer.classList.add("image-row")  // Add CSS class for row styling
+    rowContainer.style.display = "flex"  // Flexbox for horizontal layout
+    rowContainer.style.flexWrap = "wrap" // Wrap if necessary
+
+    row.images.forEach((image: string, i: number) => {
+      let item = rowContainer.appendChild(document.createElement("div"))
       item.classList.add("item")
-      if (data.args["use_container_width"] === true) {
-        item.classList.add("stretch")
-      }
+      item.style.margin = "0.5rem" // Adjust margin between images
+      item.style.flex = "1 1 auto" // Flex-grow to handle container width
 
       let box = item.appendChild(document.createElement("div"))
       box.classList.add("image-box")
 
-      let img = box.appendChild(document.createElement("img"))
-      img.classList.add("image")
-      img.src = image
+      // Ensure the image is a string before setting it as src
+      if (typeof image === "string") {
+        let img = box.appendChild(document.createElement("img"))
+        img.classList.add("image")
+        img.src = image
 
-      if (captions) {
-        let caption = item.appendChild(document.createElement("div"))
-        caption.classList.add("caption")
-        caption.innerHTML = captions[i]
-      }
+        if (row.captions && row.captions[i]) {
+          let caption = item.appendChild(document.createElement("div"))
+          caption.classList.add("caption")
+          caption.innerHTML = row.captions[i]
+        }
 
-      if (i === data.args["index"]) {
-        box.classList.add("selected")
-        img.classList.add("selected")
-      }
-
-      img.onclick = function () {
-        if (!data.args["disabled"]) {  // Ensure click only works when not disabled
-          container.querySelectorAll(".selected").forEach((el) => {
-            el.classList.remove("selected")
-          })
-          Streamlit.setComponentValue(i)
+        if (rowIndex === data.args["selected_row_index"] && i === data.args["index"]) {
           box.classList.add("selected")
           img.classList.add("selected")
         }
+
+        img.onclick = function () {
+          if (!data.args["disabled"]) {  // Ensure click only works when not disabled
+            container.querySelectorAll(".selected").forEach((el) => {
+              el.classList.remove("selected")
+            })
+            Streamlit.setComponentValue({ rowIndex, index: i })
+            box.classList.add("selected")
+            img.classList.add("selected")
+          }
+        }
+      } else {
+        console.error("Invalid image format: ", image)
       }
     })
   }
-  // Apply the disabled state if data.disabled is true
+
+  if (images) {
+    images.forEach((row: any, rowIndex: number) => {
+      renderImageRow(row, rowIndex)
+    })
+  } else if (imagesRows) {
+    imagesRows.forEach((row: any, rowIndex: number) => {
+      renderImageRow(row, rowIndex)
+    })
+  }
+
+  // Apply the disabled state if data.args["disabled"] is true
   if (data.args["disabled"]) {
     container.classList.add("disabled")
   } else {

@@ -35,9 +35,110 @@ def _encode_numpy(img):
     return f"data:image/jpeg;base64, {encoded}"
 
 
+# def image_select(
+#     label: str,
+#     images: list = None,
+#     images_rows: list = None,
+#     captions: list = None,
+#     index: int = 0,
+#     *,
+#     use_container_width: bool = True,
+#     return_value: str = "original",
+#     disabled: bool = False,
+#     key: str = None,
+# ):
+#     """Shows several images and returns the image selected by the user.
+
+#     Args:
+#         label (str): The label shown above the images. [HTML code will be rendered]
+#         images (list): The images to show. Allowed image formats are paths to local
+#             files, URLs, PIL images, and numpy arrays.
+#         images_rows (dict): Alternative to `images`. A list of dictionares. Each dicitionary entry has a key "images". There must be a list of images.
+#         Each dictionary will be plotted in a own row. 
+#         captions (list of str): The captions to show below the images. Defaults to
+#             None, in which case no captions are shown. [HTML code will be rendered]
+#         index (int, optional, None): The index of the image that is selected by default.
+#             Defaults to 0.
+#         use_container_width (bool, optional): Whether to stretch the images to the
+#             width of the surrounding container. Defaults to True.
+#         return_value ("original" or "index", optional): Whether to return the
+#             original object passed into `images` or the index of the selected image.
+#             Defaults to "original".
+#         disabled (bool, optional): Whether the component is disabled. Defaults to False.
+#         key (str, optional): The key of the component. Defaults to None.
+
+#     Returns:
+#         (any): The image selected by the user (same object and type as passed to
+#             `images`).
+#     """
+
+#     # Do some checks to verify the input.
+#     if images == None and images_rows == None:
+#         raise ValueError("At least one of `images` or `images_rows` must be passed.")
+#     if images:
+#         if len(images) < 1:
+#             raise ValueError("At least one image must be passed but `images` is empty.")
+#         if captions is not None and len(images) != len(captions):
+#             raise ValueError(
+#                 "The number of images and captions must be equal but `captions` has "
+#                 f"{len(captions)} elements and `images` has {len(images)} elements."
+#             )
+#         if index:
+#             if index >= len(images):
+#                 raise ValueError(
+#                     f"`index` must be smaller than the number of images ({len(images)}) "
+#                     f"but it is {index}."
+#                 )
+
+#     # Encode local images/numpy arrays/PIL images to base64.
+#     encoded_images = []
+#     if images:
+#         row = {"images": []}
+#         for img in images:
+#             if isinstance(img, (np.ndarray, Image.Image)):  # numpy array or PIL image
+#                 row["images"].append(_encode_numpy(np.asarray(img)))
+#             elif os.path.exists(img):  # local file
+#                 row["images"].append(_encode_file(img))
+#             else:  # url, use directly
+#                 row["images"].append(img)
+            
+#         encoded_images.append(row)
+
+#     # Pass everything to the frontend.
+#     component_value = _component_func(
+#         label=label,
+#         images=encoded_images,
+#         captions=captions,
+#         index=index,
+#         use_container_width=use_container_width,
+#         key=key,
+#         default=index,
+#         disabled=disabled,
+#         defaultValue = index
+#     )
+
+#     # The frontend component returns the index of the selected image but we want to
+#     # return the actual image.
+#         # If the component is disabled, return the default (initial) value.
+#     if disabled:
+#         component_value = index
+        
+#     if component_value is None:
+#         return None
+#     if return_value == "original":
+#         return images[component_value]
+#     elif return_value == "index":
+#         return component_value
+#     else:
+#         raise ValueError(
+#             "`return_value` must be either 'original' or 'index' "
+#             f"but is '{return_value}'."
+#         )
+
 def image_select(
     label: str,
-    images: list,
+    images: list = None,
+    images_rows: list = None,
     captions: list = None,
     index: int = 0,
     *,
@@ -45,6 +146,7 @@ def image_select(
     return_value: str = "original",
     disabled: bool = False,
     key: str = None,
+    custom_css: str = None
 ):
     """Shows several images and returns the image selected by the user.
 
@@ -52,8 +154,11 @@ def image_select(
         label (str): The label shown above the images. [HTML code will be rendered]
         images (list): The images to show. Allowed image formats are paths to local
             files, URLs, PIL images, and numpy arrays.
+        images_rows (list): Alternative to `images`. A list of dictionaries. Each 
+            dictionary entry has a key "images" with a list of images. Each dictionary
+            will be plotted in its own row. each image dictionary can also have the key "captions" a caption.
         captions (list of str): The captions to show below the images. Defaults to
-            None, in which case no captions are shown. [HTML code will be rendered]
+            None, in which case no captions are shown. [HTML code will be rendered]. Only used when images_rows is None. Otherwise the captions are taken from the images_rows key "caption".
         index (int, optional, None): The index of the image that is selected by default.
             Defaults to 0.
         use_container_width (bool, optional): Whether to stretch the images to the
@@ -63,6 +168,7 @@ def image_select(
             Defaults to "original".
         disabled (bool, optional): Whether the component is disabled. Defaults to False.
         key (str, optional): The key of the component. Defaults to None.
+        custom_css (str, optional): Custom CSS to apply to the component. Defaults to None.
 
     Returns:
         (any): The image selected by the user (same object and type as passed to
@@ -70,30 +176,62 @@ def image_select(
     """
 
     # Do some checks to verify the input.
-    if len(images) < 1:
-        raise ValueError("At least one image must be passed but `images` is empty.")
-    if captions is not None and len(images) != len(captions):
-        raise ValueError(
-            "The number of images and captions must be equal but `captions` has "
-            f"{len(captions)} elements and `images` has {len(images)} elements."
-        )
-    if index:
-        if index >= len(images):
-            raise ValueError(
-                f"`index` must be smaller than the number of images ({len(images)}) "
-                f"but it is {index}."
-            )
+    if images is None and images_rows is None:
+        raise ValueError("At least one of `images` or `images_rows` must be passed.")
+    
+    if images and images_rows:
+        raise ValueError("Only one of `images` or `images_rows` must be passed.")
+    
+    if images:
+        if len(images) < 1:
+            raise ValueError("At least one image must be passed but `images` is empty.")
+    
+        if index:
+            if index >= len(images):
+                raise ValueError(
+                    f"`index` must be smaller than the number of images ({len(images)}) "
+                    f"but it is {index}."
+                )
 
     # Encode local images/numpy arrays/PIL images to base64.
     encoded_images = []
-    for img in images:
-        if isinstance(img, (np.ndarray, Image.Image)):  # numpy array or PIL image
-            encoded_images.append(_encode_numpy(np.asarray(img)))
-        elif os.path.exists(img):  # local file
-            encoded_images.append(_encode_file(img))
-        else:  # url, use directly
-            encoded_images.append(img)
-
+    
+    if images:
+        row = {"images": [], "captions": []}
+        for i, img in enumerate(images):
+            if isinstance(img, (np.ndarray, Image.Image)):  # numpy array or PIL image
+                row["images"].append(_encode_numpy(np.asarray(img)))
+            elif os.path.exists(img):  # local file
+                row["images"].append(_encode_file(img))
+            else:  # url, use directly
+                row["images"].append(img)
+            
+            if captions:
+                if captions[i]:
+                    row["captions"].append(captions[i])
+        encoded_images.append(row)
+    
+    if images_rows:
+        for image_row in images_rows:
+            row = {"images": [], "captions": []}
+            for i,img in enumerate(image_row["images"]):
+                if isinstance(img, (np.ndarray, Image.Image)):  # numpy array or PIL image
+                    row["images"].append(_encode_numpy(np.asarray(img)))
+                elif os.path.exists(img):  # local file
+                    row["images"].append(_encode_file(img))
+                else:  # url, use directly
+                    row["images"].append(img)
+                
+                if "captions" in image_row:
+                    if image_row["captions"]:
+                        if image_row["captions"][i]:
+                            row["captions"].append(image_row["captions"][i])
+                    
+                
+                    
+                
+            encoded_images.append(row)
+    
     # Pass everything to the frontend.
     component_value = _component_func(
         label=label,
@@ -104,19 +242,28 @@ def image_select(
         key=key,
         default=index,
         disabled=disabled,
-        defaultValue = index
+        defaultValue=index
     )
+    
+    st.write(component_value)
 
-    # The frontend component returns the index of the selected image but we want to
-    # return the actual image.
-        # If the component is disabled, return the default (initial) value.
+    # If the component is disabled, return the default (initial) value.
     if disabled:
         component_value = index
         
+    # The frontend component returns the index of the selected image but we want to
+    # return the actual image.
     if component_value is None:
         return None
+
     if return_value == "original":
-        return images[component_value]
+        if images:
+            return images[component_value["index"]]
+        else:
+            st.write(images_rows)
+            # Flatten the list of image rows to return the correct image.
+            
+            return images_rows[component_value["rowIndex"]]["images"][component_value["index"]]
     elif return_value == "index":
         return component_value
     else:
