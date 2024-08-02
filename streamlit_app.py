@@ -51,7 +51,7 @@ with st.echo():
     from streamlit_image_select import image_select
 
     images_row = [{"images": ["images/cat1.jpeg", "images/cat2.jpeg", "images/cat3.jpeg", "images/cat3.jpeg"], "captions":["Cat 1", "Cat 2", "Cat 3","CAT 500"],
-                   "tooltip": ["This is a cat", "This is another cat", "This is a third cat",""]},
+                   "tooltip": ["This is a cat", "This is another cat", "This is a third cat",""], "vertical_label": "<b>Label 1"},
                   {"images": ["images/cat4.jpeg",], "captions":["Cat 4"]},
                   {"images": ["images/cat1.jpeg", "images/cat1.jpeg"], "captions":["Cat 5", "Cat 6", ]},]
     

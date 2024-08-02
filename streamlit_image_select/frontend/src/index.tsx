@@ -53,7 +53,26 @@ function onRender(event: Event): void {
   container.innerHTML = "";
 
   const renderImageRow = (row: any, rowIndex: number) => {
-    const rowContainer = container.appendChild(document.createElement("div"));
+    // Create a container for the row and the vertical label
+    const rowWrapper = container.appendChild(document.createElement("div"));
+    rowWrapper.classList.add("row-wrapper");
+    rowWrapper.style.display = "flex";
+    rowWrapper.style.alignItems = "center";
+    rowWrapper.style.marginBottom = "1rem";
+
+    // Add the vertical label if provided
+    if (row.vertical_label) {
+      const verticalLabel = rowWrapper.appendChild(document.createElement("div"));
+      verticalLabel.classList.add("vertical-label");
+      verticalLabel.innerHTML = row.vertical_label;
+      verticalLabel.style.marginRight = "1rem";
+      verticalLabel.style.writingMode = "vertical-rl";
+      verticalLabel.style.textAlign = "center";
+      verticalLabel.style.transform = "rotate(180deg)"; // Rotate the label 180 degrees
+
+    }
+
+    const rowContainer = rowWrapper.appendChild(document.createElement("div"));
     rowContainer.classList.add("image-row");  // Add CSS class for row styling
     rowContainer.style.display = "flex";  // Flexbox for horizontal layout
     rowContainer.style.flexWrap = "nowrap"; // Prevent wrapping

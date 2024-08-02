@@ -129,7 +129,7 @@ def image_select(
     
     if images_rows:
         for image_row in images_rows:
-            row = {"images": [], "captions": [], "tooltip": []}
+            row = {"images": [], "captions": [], "tooltip": [], "vertical_label": ""}
             for i,img in enumerate(image_row["images"]):
                 if isinstance(img, (np.ndarray, Image.Image)):  # numpy array or PIL image
                     row["images"].append(_encode_numpy(np.asarray(img)))
@@ -162,6 +162,8 @@ def image_select(
                     row["tooltip"].append("")
         
         
+            if "vertical_label" in image_row:
+                row["vertical_label"] = image_row["vertical_label"]
             encoded_images.append(row)
     # Pass everything to the frontend.
     component_value = _component_func(
