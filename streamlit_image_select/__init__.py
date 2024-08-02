@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 from PIL import Image
 from typing import List, Dict, Union, Optional
 
-_RELEASE = False
+_RELEASE = True
 
 if not _RELEASE:
     _component_func = components.declare_component(
@@ -163,11 +163,10 @@ def image_select(
         
         
             encoded_images.append(row)
-    
     # Pass everything to the frontend.
     component_value = _component_func(
         label=label,
-        images=encoded_images,
+        images_rows=encoded_images,
         captions=captions,
         index=index,
         use_container_width=use_container_width,

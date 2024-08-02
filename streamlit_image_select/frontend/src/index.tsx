@@ -4,11 +4,6 @@ const labelDiv = document.body.appendChild(document.createElement("label"))
 const container = document.body.appendChild(document.createElement("div"))
 container.classList.add("container")
 
-/**
- * The component's render function. This will be called immediately after
- * the component is initially loaded, and then again every time the
- * component gets new data from Python.
- */
 function onRender(event: Event): void {
   // Get the RenderData from the event
   const data = (event as CustomEvent<RenderData>).detail
@@ -61,13 +56,15 @@ function onRender(event: Event): void {
     const rowContainer = container.appendChild(document.createElement("div"));
     rowContainer.classList.add("image-row");  // Add CSS class for row styling
     rowContainer.style.display = "flex";  // Flexbox for horizontal layout
-    rowContainer.style.flexWrap = "wrap"; // Wrap if necessary
+    rowContainer.style.flexWrap = "nowrap"; // Prevent wrapping
+    rowContainer.style.gap = "1rem"; // Set gap between images
 
     row.images.forEach((image: string, i: number) => {
       let item = rowContainer.appendChild(document.createElement("div"));
       item.classList.add("item");
-      item.style.margin = "0.5rem"; // Adjust margin between images
-      item.style.flex = "1 1 auto"; // Flex-grow to handle container width
+      item.style.flex = "0 0 auto"; // Prevent flex-grow
+      item.style.width = "10rem"; // Fixed width of 10rem
+      item.style.boxSizing = "border-box"; // Include padding and border in the element's width and height
 
       let box = item.appendChild(document.createElement("div"));
       box.classList.add("image-box");

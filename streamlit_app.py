@@ -28,7 +28,7 @@ def add_sunglasses(img, position):
     return pil_img
 
 
-st.set_page_config("Demo for streamlit-image-select", "🖼️")
+st.set_page_config("Demo for streamlit-image-select", "🖼️", layout="wide")
 
 
 st.write(
@@ -50,9 +50,15 @@ arrays. You can also add captions (optional)!
 with st.echo():
     from streamlit_image_select import image_select
 
-    images_row = [{"images": ["images/cat1.jpeg", "images/cat2.jpeg", "images/cat3.jpeg"], "captions":["Cat 1", "Cat 2", "Cat 3"],
+    images_row = [{"images": ["images/cat1.jpeg", "images/cat2.jpeg", "images/cat3.jpeg", "images/cat3.jpeg"], "captions":["Cat 1", "Cat 2", "Cat 3","CAT 500"],
+                   "tooltip": ["This is a cat", "This is another cat", "This is a third cat",""]},
+                  {"images": ["images/cat4.jpeg",], "captions":["Cat 4"]},
+                  {"images": ["images/cat1.jpeg", "images/cat1.jpeg"], "captions":["Cat 5", "Cat 6", ]},]
+    
+    images_row2 = [{"images": ["images/cat1.jpeg", "images/cat2.jpeg", "images/cat3.jpeg"], "captions":["Cat 1", "Cat 2", "Cat 3"],
                    "tooltip": ["This is a cat", "This is another cat", "This is a third cat"]},
-                  {"images": ["images/cat4.jpeg",], "captions":["Cat 4"]}]
+                  {"images": ["images/cat4.jpeg",], "captions":["Cat 4"]},
+                  {"images": ["images/cat1.jpeg", "images/cat1.jpeg","images/cat1.jpeg"], "captions":["Cat 5", "Cat 6","CAT 7" ]},]
     
     img = image_select(
         label="Select a cat",
@@ -66,6 +72,7 @@ with st.echo():
         captions=["<b>A cat</b>", "Another cat", "Oh look, a cat!", "Guess what, a cat..."],
         index={'rowIndex': 0, 'index': 0},
         disabled = False,
+        use_container_width=True,
         
     )
     st.write(img)

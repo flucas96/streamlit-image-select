@@ -1,1 +1,1 @@
-recursive-include STREAMLIT-IMAGE-SELECT/frontend/build *
+recursive-include streamlit_image_select/frontend/build *

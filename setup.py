@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setuptools.setup(
 name = "streamlit-image-select-rows",
-version = "0.7.0",
+version = "0.7.2",
 description = "🖼️ An image select component for Streamlit",
 authors = ["Johannes Rieke <johannes.rieke@gmail.com>", "Fabian Lucas <fl@msr.de>"] ,
 license = "MIT",

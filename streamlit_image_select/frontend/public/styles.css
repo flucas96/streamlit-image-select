@@ -21,24 +21,25 @@ label {
     vertical-align: middle;
     display: flex;
     flex-direction: row;
-    -webkit-box-align: center;
     align-items: center;
 }
 
 .container {
     width: 100%;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 1rem; /* Gap between rows */
+}
+
+.image-row {
+    display: flex;
+    gap: 1rem; /* Gap between images */
 }
 
 .item {
-    width: 10rem;
-}
-
-.item.stretch {
-    flex: 1;
+    flex: 0 0 auto;
+    width: 10rem; /* Fixed width */
+    box-sizing: border-box; /* Ensures padding and border are included in the width and height */
 }
 
 .image-box {
@@ -46,7 +47,6 @@ label {
     border-radius: 0.25rem;
     padding: calc(0.25rem + 1px);
     height: 10rem;
-    min-width: 10rem;
     position: relative; /* Required for tooltips */
 }
 
@@ -69,19 +69,16 @@ label {
 
 .image:hover {
     opacity: 1;
-    /* filter: brightness(1.1); */
 }
 
 .image-box.selected {
     border-color: var(--primary-color);
     border-width: 2px;
     padding: 0.25rem;
-    /* box-shadow: rgb(255 75 75 / 50%) 0px 0px 0px 0.2rem; */
 }
 
 .image.selected {
     opacity: 1;
-    /* filter: brightness(1.1); */
 }
 
 .caption {
@@ -98,16 +95,16 @@ label {
 .disabled .image {
     filter: grayscale(100%);
     opacity: 0.5;
-    pointer-events: none; /* Optional: Disables any interactions with the image */
+    pointer-events: none;
 }
 
 .disabled .image-box {
-    border-color: rgba(49, 51, 63, 0.4); /* Grey out the border of the image-box */
-    cursor: not-allowed; /* Changes the cursor to indicate that the item is disabled */
+    border-color: rgba(49, 51, 63, 0.4);
+    cursor: not-allowed;
 }
 
 .disabled .image-box.selected {
-    border-color: rgba(49, 51, 63, 0.4); /* Grey out the border of the selected image-box */
+    border-color: rgba(49, 51, 63, 0.4);
     border-width: 2px;
     padding: 0.25rem;
 }
@@ -115,4 +112,3 @@ label {
 .disabled .image.selected {
     opacity: 0.5;
 }
-
